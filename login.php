@@ -1,7 +1,9 @@
 <?php
 
-	session_cache_limiter('nocache');
-	session_start();
+	include '../../seguridad/subida/session.php';
+	include '../../seguridad/subida/db.php';
+	
+	Session::init();
 
 	$mensaje = "";
 
@@ -9,11 +11,11 @@
 		$mensaje = strip_tags(trim($_GET['mensaje']));
 	}
 
-	if(isset($_SESSION['validado']) && $_SESSION['validado'] == true) {
+	if(Session::chkValidity()) {
 
 		/*
 		*	En caso de que el usuario entre al login con una sesión en la que ya
-		*	se le ha validado, se le manda al menú.
+		*	se le ha validado, se le redirige al menú.
 		*/
 		header("Location: panel.php");
 		exit;
@@ -27,31 +29,17 @@
 		
 		if(!empty($user) && !empty($pw)){
 
-			include '../../seguridad/subida/nomireaqui.php';
+			$db = new DB();
 
-			$conexion = @mysqli_connect(IP,USER,PW,DB);
-			if(!$conexion){ echo '<h1 style="color:red;text-align:center;">Ha ocurrido un error al conectarse a la DB</h1>'; exit; }
-			mysqli_set_charset($conexion,'utf8');
-
-			/*
-			*	Se seleccionan datos básicos del usuario, los cuales usaremos
-			*	posteriormente en diversas zonas del programa.
-			*/
-			$query = mysqli_prepare($conexion, "select usuario, clave, cuota from usuarios where usuario=?");
-			mysqli_stmt_bind_param($query,"s",$user);
-			mysqli_stmt_execute($query);
-			mysqli_stmt_bind_result($query,$nombre,$clave,$cuota);
-			mysqli_stmt_fetch($query);
-			mysqli_stmt_close($query);
-			unset($query);
+			$usrData = $db->getUserData($user);
 
 			/*
 			*	Se comprueba el login, en caso de que sea correcto, se valida al usuario,
 			*	y se le envia al panel.
 			*/
-			if(password_verify($pw,$clave)) {
+			if(password_verify($pw, $usrData['clave'])) {
 
-				validarUsuario($nombre, $cuota);
+				Session::validateUsr($nombre, $usrData['cuota']);
 				header("Location: panel.php");
 				exit;
 
@@ -63,10 +51,10 @@
 				*/
 				header("Location: login.php?mensaje=".urlencode("alert('Usuario inexistente o clave no reconocida.')"));
 				exit;
-
+				
 			}
 
-			mysqli_close($conexion);
+			$db->close();
 
 		}
 

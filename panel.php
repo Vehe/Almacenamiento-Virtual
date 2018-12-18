@@ -1,9 +1,11 @@
 <?php
 
-    session_cache_limiter('nocache');
-	session_start();
+    include '../../seguridad/subida/session.php';
+    include '../../seguridad/subida/db.php';
+
+    Session::init();
     
-	if(isset($_SESSION['validado']) && $_SESSION['validado'] == true) {
+	if(Session::chkValidity()) {
 
         
 

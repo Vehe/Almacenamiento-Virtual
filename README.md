@@ -9,3 +9,4 @@ Para que todo funcione correctamente, la carpeta 'seguridad', tenemos que ponerl
 ## TODO
 
 - V.1 Funcionamiento exclusivamente apartado de subida de archivos.
+- V.2 Reemplazo de partes de código, por el uso de clases, para una mejor organización.
