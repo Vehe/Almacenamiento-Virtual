@@ -13,10 +13,11 @@
 
 	if(Session::chkValidity()) {
 
-		/*
-		*	En caso de que el usuario entre al login con una sesión en la que ya
-		*	se le ha validado, se le redirige al menú.
-		*/
+		/**
+		 *	En caso de que el usuario entre al login con una sesión en la que ya
+		 *	se le ha validado, se le redirige al menú.
+		 *
+		 */
 		header("Location: panel.php");
 		exit;
 
@@ -33,22 +34,24 @@
 
 			$usrData = $db->getUserData($user);
 
-			/*
-			*	Se comprueba el login, en caso de que sea correcto, se valida al usuario,
-			*	y se le envia al panel.
-			*/
+			/**
+			 *	Se comprueba el login, en caso de que sea correcto, se valida al usuario,
+			 *	y se le envia al panel.
+			 *
+			 */
 			if(password_verify($pw, $usrData['clave'])) {
 
-				Session::validateUsr($nombre, $usrData['cuota']);
+				Session::validateUsr($user, $usrData['cuota']);
 				header("Location: panel.php");
 				exit;
 
 			} else {
 
-				/*
-				*	Se le indica al usuario con un mensaje que la cuenta a la que esta intentando entrar
-				*	no se encuentra en la base de datos.
-				*/
+				/** 
+				 *	Se le indica al usuario con un mensaje que la cuenta a la que esta intentando entrar
+				 *	no se encuentra en la base de datos.
+				 *
+				 */
 				header("Location: login.php?mensaje=".urlencode("alert('Usuario inexistente o clave no reconocida.')"));
 				exit;
 				
@@ -101,8 +104,6 @@
 					</button>
 				</div>
 			</form>
-
-			
 		</div>
 	</div>
 
